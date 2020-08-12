@@ -1,0 +1,383 @@
+<html>
+<style>
+/*
+ CSS for the main interaction
+*/
+.accordion > input[name="collapse"] {
+  display: none;
+}
+
+.accordion label,
+.accordion .content{
+ max-width: 80%;
+  margin: 0 auto;
+ }
+
+
+.accordion .content {
+  background: #fff;
+  overflow: hidden;
+  height: 0;
+  transition: 0.5s;
+  //box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.accordion > input[name="collapse"]:checked ~ .content {
+  height: 720px;
+  transition: height 0.5s;
+}
+
+.accordion label {
+  display: block;
+ 
+}
+
+
+/* For Desktop */
+@media only screen and (min-width: 620px){
+
+
+.accordion > input[name="collapse"]:checked ~ .content {
+  height: 350px; 
+}
+}
+
+.accordion {
+  margin-bottom: 1em;
+}
+
+.accordion > input[name="collapse"]:checked ~ .content {
+  border-top: 0;
+  transition: 0.3s;
+}
+
+.accordion .handle {
+  margin: 0;
+  font-size: 16px;
+  
+}
+
+.accordion label {
+  color: #fff;
+  cursor: pointer;
+  font-weight: normal;
+  padding: 10px;
+  background: #ff88bb;
+  user-select: none;
+  
+}
+
+.accordion label:hover,
+.accordion label:focus {
+  background: #efcfce;
+}
+
+.accordion .handle label:before {
+  font-family: FontAwesome;
+  content: "\f107";
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 1em;
+  line-height: 1.556em;
+  vertical-align: middle;
+  transition: 0.4s;
+  
+}
+
+.accordion > input[name="collapse"]:checked ~ .handle label:before {
+    transform: rotate(180deg);
+    transform-origin: center;
+    transition: 0.4s;
+}
+
+
+/*
+ Demo purposes only
+*/
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  background: #ccc;
+  padding: 10px;
+}
+
+a {
+  color: #06c;
+}
+
+p {
+  margin: 0 0 1em;
+  padding: 10px;
+}
+
+h1 {
+  margin: 0 0 1.5em;
+  font-weight: 600;
+  font-size: 1.5em;
+}
+
+.accordion p:last-child {
+  margin-bottom: 0;
+}
+.container{
+    max-width: 620px;
+    margin: 0 auto;
+}
+</style>
+<script type="text/javascript">
+   RED.nodes.registerType('reporterconfig',{
+        category: 'ribbon',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			
+			reportToCachetHQ: {value: "false"},
+			reportToGaap: {value: "false"},
+			reportToSlack: {value: "false"},
+			
+			slacklogs: {value: "nodered-ctab-test-logs"},					
+			slackresults: {value: "nodered-ctab-test-results"},
+			slacksummary: {value: "nodered-ctab-test-summary"},		
+			slacktoken: {value: ""},
+			
+			cachetserver: {value: "http://status.cpaas.kandy.io:8000"},
+			cachetcomponentgroup: {value: "KBS Lab CPaaS NVS"},
+			cachetcomponent: {value: "LiveSupport"},
+			cachettoken: {value: ""},
+
+			gaapurl: {value: "https://ops.genband.com"},
+			gaaptokenurl: {value: "/gaap/auth/v1/token"},
+			grant_type: {value: "client_credentials"},
+			client_id:  {value: ""},
+			client_secret: {value: ""},
+			site_location: {value: "Staging"},
+			version: {value: "3.4.1"},
+			test_title: {value: "Demo Test"},
+			gaapinsertlog: {value: "/gaap/rest/monitor/v1/logs"},
+			gaapinsertresult: {value: "/gaap/rest/monitor/v1/testresults"},
+			gaapinsertsummary: {value: "/gaap/rest/monitor/v1/statussummary"},	
+			
+        },
+        inputs:1,
+        outputs:1,
+		color: "#D8BFD8",
+        icon: "envelope.svg",
+		align: "left",
+        label: function() {
+            return this.name||"Reporter Config";
+        },
+		oneditprepare: function () {		
+			//alert('oneditprepare- '+this.reportToSlack +','+this.reportToCachetHQ +','+ this.reportToGaap );
+
+			if(this.reportToSlack === "true"){
+			//	alert('slack true');
+				$("#node-input-report_to_slack").prop('checked', true);
+			}else{
+			//	alert('slack false');
+				$("#node-input-report_to_slack").prop('checked', false);
+			}			
+			if(this.reportToCachetHQ === "true"){
+			//	alert('cachet true');
+				$("#node-input-report_to_cachethq").prop('checked', true);
+			}else{
+			//	alert('cachet false');
+				$("#node-input-report_to_cachethq").prop('checked', false);
+			}
+			if(this.reportToGaap === "true"){
+			//	alert('gaap true');
+				$("#node-input-report_to_gaap").prop('checked', true);
+			}else{
+				//alert('gaap false');
+				$("#node-input-report_to_gaap").prop('checked', false);
+			}
+			
+			
+			$("#node-input-slack_logs").val(this.slacklogs); 
+			$("#node-input-slack_results").val(this.slackresults); 
+			$("#node-input-slack_summary").val(this.slacksummary); 
+			$("#node-input-slack_token").val(this.slacktoken); 
+			
+			$("#node-input-cachet_cachet_server").val(this.cachetserver); 
+			$("#node-input-cachet_token").val(this.cachettoken); 
+			$("#node-input-cachet_component_group").val(this.cachetcomponentgroup); 
+			$("#node-input-cachet_component").val(this.cachetcomponent); 			
+			
+			$("#node-input-gaapurl").val(this.gaapurl); 
+			$("#node-input-client_id").val(this.client_id); 
+			$("#node-input-client_secret").val(this.client_secret); 
+			$("#node-input-site_location").val(this.site_location); 
+			$("#node-input-version").val(this.version); 
+			$("#node-input-test_title").val(this.test_title); 
+			
+			//alert('set loaded value - oneditprepare complete');
+		},
+		oneditsave: function() {
+			//alert('oneditsave');
+			var node = this;
+			node.name = $('#node-input-name').val();				
+						
+			if($('#node-input-report_to_slack').prop('checked')){			
+				node.reportToSlack = "true";
+				//alert('slack enabled');
+				node.slacklogs= $('#node-input-slack_logs').val();
+				node.slackresults = $('#node-input-slack_results').val();
+				node.slacksummary= $('#node-input-slack_summary').val();
+				node.slacktoken= $('#node-input-slack_token').val();
+				alert(node.slacklogs +','+ node.slackresults +','+ node.slacksummary +','+node.slacktoken);
+			}else{			
+				//alert('slack disabled');
+				node.reportToSlack = "false";
+			}
+			
+			if($('#node-input-report_to_cachethq').prop('checked')){			
+				node.reportToCachetHQ = "true";
+				//alert('CachetHQ enabled');
+				node.cachetserver = $('#node-input-cachet_cachet_server').val();
+				node.cachetcomponentgroup = $('#node-input-cachet_component_group').val();
+				node.cachetcomponent = $('#node-input-cachet_component').val();
+				node.cachettoken = $('#node-input-cachet_token').val();
+				alert(node.cachetserver +','+ node.cachetcomponentgroup +','+ node.cachetcomponent +','+node.cachettoken);
+			}else{			
+				//alert('CachetHQ disabled');
+				node.reportToCachetHQ = "false";
+			}	
+			
+			if($('#node-input-report_to_gaap').prop('checked')){			
+				node.reportToGaap = "true";
+				//alert('Gaap enabled');
+				node.gaapurl = $('#node-input-gaapurl').val;					
+				node.client_id = $('#node-input-client_id').val;	
+				node.client_secret = $('#node-input-client_secret').val;						
+				node.site_location = $('#node-input-site_location').val;		
+				node.version = $('#node-input-version').val;		
+				node.test_title = $('#node-input-test_title').val;	
+				//node.gaaptokenurl = $('#node-input-gaaptokenurl').val;	
+				//node.grant_type = $('#node-input-grant_type').val;					
+				//node.gaapinsertlog = $('#node-input-gaapinsertlog').val;	
+				//node.gaapinsertresult = $('#node-input-gaapinsertresult').val;	
+				//node.gaapinsertsummary = $('#node-input-gaapinsertsummary').val;	
+		}else{
+			//alert('Gaap disabled');
+			node.reportToGaap = "false";
+		}
+	}
+    });
+</script>
+
+<script type="text/x-red" data-template-name="reporterconfig">    
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag" style="width:30%"/>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width:70%;">
+    </div>
+
+<section class="accordion">
+  <input type="checkbox" name="collapse" id="node-input-report_to_slack" unchecked>
+  
+  <h2 class="handle">
+    <label for="node-input-report_to_slack">Report to Slack</label>
+  </h2>
+  
+  <div class="content">  
+	<div class="form-row">
+        <label for="node-input-slack_token"><i class="icon-tag" style="width:30%"></i>Slack Token</label>
+        <input type="text" id="node-input-slack_token" placeholder="" style="width:70%;">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-slack_logs"><i class="icon-tag" style="width:30%"></i>Logs Channel</label>
+        <input type="text" id="node-input-slack_logs" placeholder="nodered-ctab-test-logs" style="width:70%;">
+    </div>	
+	
+	<div class="form-row">
+        <label for="node-input-slack_results"><i class="icon-tag" style="width:30%"></i>Results Channel</label>
+        <input type="text" id="node-input-slack_results" placeholder="nodered-ctab-test-results" style="width:70%;">
+    </div>	
+	
+	<div class="form-row">
+        <label for="node-input-slack_summary"><i class="icon-tag" style="width:30%"></i>Summary Channel</label>
+        <input type="text" id="node-input-slack_summary" placeholder="nodered-ctab-test-summary" style="width:70%;">
+    </div>		
+		
+  </div>
+</section>
+
+
+<section class="accordion">
+  <input type="checkbox" name="collapse" id="node-input-report_to_cachethq" unchecked>
+  <h2 class="handle">
+    <label for="node-input-report_to_cachethq">Report to CachetHQ</label>
+  </h2>
+  <div class="content">
+  <div class="form-row">
+        <label for="node-input-cachet_cachet_server"><i class="icon-tag" style="width:30%"></i>CachetHQ Server</label>
+        <input type="text" id="node-input-cachet_cachet_server" placeholder="http://status.cpaas.kandy.io:8000" style="width:70%;">
+    </div>	
+	
+	<div class="form-row">
+        <label for="node-input-cachet_token"><i class="icon-tag" style="width:30%"></i>CachetHQ Token</label>
+        <input type="text" id="node-input-cachet_token" placeholder="" style="width:70%;">
+    </div>	
+	
+    <div class="form-row">
+        <label for="node-input-cachet_component_group"><i class="icon-tag" style="width:30%"></i>Component Group</label>
+        <input type="text" id="node-input-cachet_component_group" placeholder="KBS Lab CPaaS NVS" style="width:70%;">
+    </div>	
+	
+	<div class="form-row">
+        <label for="node-input-cachet_component"><i class="icon-tag" style="width:30%"></i>Component</label>
+        <input type="text" id="node-input-cachet_component" placeholder="LiveSupport" style="width:70%;">
+    </div>	   		   
+	
+  </div>
+</section>
+
+<section class="accordion">
+  <input type="checkbox" name="collapse" id="node-input-report_to_gaap" unchecked>
+  <h2 class="handle">
+    <label for="node-input-report_to_gaap">Report to GAAP</label>
+  </h2>
+  <div class="content">
+	<div class="form-row">
+        <label for="node-input-gaapurl"><i class="icon-tag" style="width:30%"></i>Gaap URL</label>
+        <input type="text" id="node-input-gaapurl" placeholder="https://ops.genband.com" style="width:70%;">
+    </div>	
+		
+	<div class="form-row">
+        <label for="node-input-client_id"><i class="icon-tag" style="width:30%"></i>Client ID</label>
+        <input type="text" id="node-input-client_id" placeholder="" style="width:70%;">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-client_secret"><i class="icon-tag" style="width:30%"></i>Client Secret</label>
+        <input type="text" id="node-input-client_secret" placeholder="" style="width:70%;">
+    </div>
+	
+	
+	<div class="form-row">
+        <label for="node-input-site_location"><i class="icon-tag" style="width:30%"></i>Site location</label>
+        <input type="text" id="node-input-site_location" placeholder="Staging" style="width:70%;">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-version"><i class="icon-tag" style="width:30%"></i>Version</label>
+        <input type="text" id="node-input-version" placeholder="3.4.1" style="width:70%;">
+    </div>	
+		
+	<div class="form-row">
+        <label for="node-input-test_title"><i class="icon-tag" style="width:30%"></i>Test Title</label>
+        <input type="text" id="node-input-test_title" placeholder="Demo test" style="width:70%;">
+    </div>	
+  </div>
+</section>
+
+</script>
+
+<script type="text/x-red" data-help-name="reporterconfig">
+    <p>Node to Configure Reporter Elements</p>
+</script>
+
+</html>
