@@ -1,6 +1,6 @@
 {
   "name": "@rganesan/node-red-contrib-reporterconfig",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reporter Config",
   "main": "reporterconfig.js",
   "scripts": {
