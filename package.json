@@ -1,17 +1,19 @@
 {
   "name": "@rganesan/node-red-contrib-reporterconfig",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Reporter Config",
   "main": "reporterconfig.js",
   "scripts": {
     "test": ""
   },
   "author": "",
   "license": "ISC",
-   "node-red": {
+  "node-red": {
     "nodes": {
       "reporterconfig": "reporterconfig.js"
     }
   },
-  "description": "Reporter Config"
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
 }
